@@ -29,6 +29,7 @@ class Computer
      */
     private $atributions;
 
+
     public function __construct()
     {
         $this->atributions = new ArrayCollection();
@@ -44,7 +45,7 @@ class Computer
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 

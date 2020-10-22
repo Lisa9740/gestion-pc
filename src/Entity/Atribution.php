@@ -22,10 +22,6 @@ class Atribution
      */
     private $date;
 
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $hour;
 
     /**
      * @ORM\ManyToOne(targetEntity=Computer::class, inversedBy="atributions")
@@ -33,9 +29,14 @@ class Atribution
     private $computer;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="atributions")
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="atributions", cascade={"persist"})
      */
     private $customer;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $hour;
 
     public function getId(): ?int
     {
@@ -50,18 +51,6 @@ class Atribution
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getHour(): ?\DateTimeInterface
-    {
-        return $this->hour;
-    }
-
-    public function setHour(\DateTimeInterface $hour): self
-    {
-        $this->hour = $hour;
 
         return $this;
     }
@@ -86,6 +75,18 @@ class Atribution
     public function setCustomer(?Customer $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function getHour(): ?int
+    {
+        return $this->hour;
+    }
+
+    public function setHour(int $hour): self
+    {
+        $this->hour = $hour;
 
         return $this;
     }

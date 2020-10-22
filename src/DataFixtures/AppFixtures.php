@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Computer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
@@ -18,6 +19,14 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $adminUser = new User();
+
+        for ($i = 1; $i <= 5; $i++) {
+
+            $computer = new Computer();
+            $computer->setName('PC' . $i);
+            $manager->persist($computer);
+        }
+
         $adminUser->setFirstName('Alison')
             ->setLastName('Barret')
             ->setEmail('barretalison@gmail.com')
