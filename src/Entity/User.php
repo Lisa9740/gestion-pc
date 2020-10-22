@@ -37,6 +37,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $hash;
+    private $userRoles;
 
     public function getId(): ?int
     {
@@ -98,7 +99,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-
+        return ['ROLE_USER'];
     }
 
     public function getSalt()
@@ -108,7 +109,7 @@ class User implements UserInterface
 
     public function getUsername()
     {
-
+        return $this->email;
     }
 
     public function eraseCredentials()
