@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Atribution;
 use App\Entity\Customer;
+use App\Repository\AtributionRepository;
 use App\Repository\ComputerRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,9 +16,10 @@ class AttributionController extends AbstractController
     /**
      * @Route("/attribution", name="attribution")
      */
-    public function index()
+    public function index(AtributionRepository $atributionRepository)
     {
-        return $this->render('attribution/index.html.twig', [
+
+        return $this->render('attribution/show.html.twig', [
             'controller_name' => 'AttributionController',
         ]);
     }
@@ -32,7 +34,6 @@ class AttributionController extends AbstractController
         $lastName = $request->request->get('lastname');
         $computer = $request->request->get('computer');
         $hour = $request->request->get('hour');
-
 
         $computer = $computerRepository->find($computer);
 
@@ -53,4 +54,15 @@ class AttributionController extends AbstractController
         return $this->redirectToRoute('home');
 
     }
+
+    /**
+     * @Route("/attribution/{id}/show", name="attribution")
+     */
+    public function show(Atribution $atribution)
+    {
+        return $this->render('attribution/show.html.twig', [
+            'attribution' => $atribution,
+        ]);
+    }
+
 }

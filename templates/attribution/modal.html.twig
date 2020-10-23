@@ -1,0 +1,7 @@
+{% embed 'modal/base.html.twig' %}
+    {% block modal_id %}view-customer-attribution{{ attribution }}{% endblock %}
+    {% block modal_title %}Attribution{% endblock %}
+    {% block modal_body %}
+    <div id="atribution_content{{ attribution }}"></div>
+    {% endblock %}
+{% endembed %}

@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Computer;
+use App\Entity\Customer;
 use App\Form\ComputerType;
 use App\Repository\AtributionRepository;
 use App\Repository\ComputerRepository;
+use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,12 +23,27 @@ class ComputerController extends AbstractController
      * @param ComputerRepository $repo
      * @return Response
      */
-    public function indexComputer(ComputerRepository $repo, AtributionRepository $atributionRepository)
+    public function indexComputer(ComputerRepository $repo, AtributionRepository $atributionRepository, CustomerRepository $customerRepository)
     {
         $computer = $repo->findAll();
+        $customer = $customerRepository->findAll();
         $attribution = $atributionRepository->findAll();
 
+        $forms = [];
+        foreach ($computer as $index){
+            $forms[$index->getId()] = $this->container
+                ->get('form.factory')
+                ->createNamed('forms' . $index->getId(), ComputerType::class, $index);
+        }
+
+        foreach ($forms as &$form)
+        {
+            $form = $form->createView();
+        }
+
         return $this->render('computer/index.html.twig', [
+            'forms'  => $forms,
+            'customers' => $customer,
             'computers' => $computer,
             'attributions' => $attribution
         ]);
@@ -33,9 +51,6 @@ class ComputerController extends AbstractController
 
     /**
      * @Route("/computer/new", name="computer_create", methods={"POST"})
-     * @param Request $request
-     * @param EntityManagerInterface $manager
-     * @return Response
      */
     public function createComputer(Request $request) : Response
     {
@@ -50,20 +65,43 @@ class ComputerController extends AbstractController
 
         $this->addFlash('success', $computer->getName() . ' à bien été ajouté.');
         return $this->redirectToRoute('home');
+    }
+
+    /**
+     * @Route("/computer/{id}/edit", name="computer_edit", methods={"POST"})
+     */
+    public function editComputer(RequestStack $requestStack, Computer $computer) : Response
+    {
+        $request = $requestStack->getCurrentRequest();
+
+        $name = $request->request->get('forms' . $computer->getId())['name'];
+        $computer->setName($name);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($computer);
+        $entityManager->flush();
+
+        $this->addFlash('success', $computer->getName() . ' à bien été ajouté.');
+        return $this->redirectToRoute('home');
 
     }
+
 
     /**
      * @Route("/computer/{id}/delete", name="computer_delete", methods={"DELETE"})
      */
-    public function deleteComputer(Computer $computer)
+    public function deleteComputer(Computer $computer, ComputerRepository $computerRepository)
     {
         $entityManager = $this->getDoctrine()->getManager();
+        $attributions = $computerRepository->find($computer)->getAtributions();
+
+        foreach ($attributions as $attribution){
+            $computer->removeAtribution($attribution);
+        }
+
         $entityManager->remove($computer);
         $entityManager->flush();
         return $this->redirectToRoute('home');
     }
-
-
 
 }
