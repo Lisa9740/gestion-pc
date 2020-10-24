@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Atribution;
 use App\Entity\Computer;
 use App\Entity\Customer;
 use App\Form\ComputerType;
 use App\Repository\AtributionRepository;
 use App\Repository\ComputerRepository;
 use App\Repository\CustomerRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,7 +47,7 @@ class ComputerController extends AbstractController
             'forms'  => $forms,
             'customers' => $customer,
             'computers' => $computer,
-            'attributions' => $attribution
+            'attributions' => $attribution,
         ]);
     }
 
@@ -59,6 +61,13 @@ class ComputerController extends AbstractController
         $name = $request->request->get('name');
         $computer = (new Computer())
             ->setName($name);
+
+        for ( $i=8; $i<19; $i++){
+            $attribution = (new Atribution())
+                ->setHour($i)
+                ->setComputer($computer);
+            $entityManager->persist($attribution);
+        }
 
         $entityManager->persist($computer);
         $entityManager->flush();
@@ -85,7 +94,6 @@ class ComputerController extends AbstractController
         return $this->redirectToRoute('home');
 
     }
-
 
     /**
      * @Route("/computer/{id}/delete", name="computer_delete", methods={"DELETE"})

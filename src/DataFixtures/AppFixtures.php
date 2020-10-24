@@ -2,7 +2,9 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Atribution;
 use App\Entity\Computer;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
@@ -25,6 +27,13 @@ class AppFixtures extends Fixture
             $computer = new Computer();
             $computer->setName('PC' . $i);
             $manager->persist($computer);
+            for ( $y=8; $y<19; $y++){
+                $attribution = (new Atribution())
+                    ->setHour($y)
+                    ->setDate(new DateTime())
+                    ->setComputer($computer);
+                $manager->persist($attribution);
+            }
         }
 
         $adminUser->setFirstName('Alison')

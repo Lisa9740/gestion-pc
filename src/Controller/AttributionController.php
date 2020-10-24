@@ -6,6 +6,7 @@ use App\Entity\Atribution;
 use App\Entity\Customer;
 use App\Repository\AtributionRepository;
 use App\Repository\ComputerRepository;
+use App\Repository\CustomerRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +64,19 @@ class AttributionController extends AbstractController
         return $this->render('attribution/show.html.twig', [
             'attribution' => $atribution,
         ]);
+    }
+
+
+    /**
+     * @Route("/attribution/{id}/delete", name="attribution_delete", methods={"DELETE"})
+     */
+    public function deleteCustomerAtribution(Atribution $atribution)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->remove($atribution);
+        $entityManager->flush();
+        return $this->redirectToRoute('home');
     }
 
 }

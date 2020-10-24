@@ -21,7 +21,6 @@ security:
                     - App\Security\LoginAuthenticator
             logout:
                 path: app_logout
-                csrf_token_generator: security.csrf.token_manager
                 invalidate_session: false
                 # where to redirect after logout
                 target: app_login
